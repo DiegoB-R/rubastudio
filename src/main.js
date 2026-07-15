@@ -2,14 +2,14 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { createRouter, createWebHistory } from 'vue-router'
 
-
 import HomeView from './views/HomeView.vue'
 import UsuarioView from './views/UsuarioView.vue'
 import InquilinoView from './views/InquilinoView.vue'
 import ServicioView from './views/ServiciosView.vue'
+import TipoServicioView from './views/TipoServicioView.vue' // <-- Importamos tu nuevo módulo
 import SucursalView from './views/SucursalesView.vue'
+import UbicacionView from './views/UbicacionVIew.vue' 
 import NotFoundView from './views/NotFoundView.vue'
-import UbicacionView from './views/UbicacionVIew.vue'
 
 import './assets/main.css'
 import App from './App.vue'
@@ -21,6 +21,7 @@ const router = createRouter({
         { path: '/Usuarios', component: UsuarioView, meta: { title: 'Usuarios' } },
         { path: '/Inquilinos', component: InquilinoView, meta: { title: 'Inquilinos' } },
         { path: '/Servicios', component: ServicioView, meta: { title: 'Servicios' } },
+        { path: '/TipoServicio', component: TipoServicioView, meta: { title: 'Tipos de Servicio' } }, // <-- NUEVA RUTA AGREGADA
         { path: '/Sucursal', component: SucursalView, meta: { title: 'Sucursales' } },
         { path: '/Ubicacion', component: UbicacionView, meta: { title: 'Ubicaciones' } },
         { path: '/:pathMatch(.*)*', component: NotFoundView } // No tiene meta.title, se ignorará automáticamente
