@@ -66,7 +66,7 @@
                     <p class="text-xs text-slate-400 mt-0.5">{{ inquilino.fechaInicio || 'Sin fecha de inicio' }}</p>
                   </td>
                   <td class="px-4 py-3">
-                    <p class="text-slate-700">{{ inquilino.telefono || 'Sin teléfono' }}</p>
+                    <p class="text-slate-700">{{ inquilino.celular || 'Sin celular' }}</p>
                     <p class="text-xs text-slate-400 truncate max-w-xs">{{ inquilino.correo || 'Sin correo' }}</p>
                   </td>
                   <td class="px-4 py-3">
@@ -127,6 +127,7 @@
               </div>
 
               <div class="grid grid-cols-2 gap-3">
+                <CampoInput v-model="store.form.celular" label="Celular" placeholder="55 8988 5578" />
                 <CampoInput v-model="store.form.telefono" label="Teléfono" placeholder="55 1234 5678" />
                 <CampoInput v-model="store.form.correo" label="Correo" type="email" placeholder="correo@ejemplo.com" />
               </div>
@@ -213,13 +214,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useinquilinoStore } from '@/stores/inquilinoStore'
+import { useInquilinoStore } from '@/stores/inquilinoStore'
 import CampoInput from '@/components/CampoInput.vue'
 import CampoSelect from '@/components/CampoSelect.vue'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
 import NavBar from '../components/NavBar.vue'
 
-const store = useinquilinoStore()
+const store = useInquilinoStore()
 const mostrarForm = ref(false)
 const itemAEliminar = ref(null)
 

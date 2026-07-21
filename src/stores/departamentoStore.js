@@ -1,29 +1,33 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import {
-  getTiposervicios,
-  getTiposervicio,
-  crearTiposervicio,
-  actualizarTiposervicio,
-  eliminarTiposervicio,
-} from '@/services/tiposervicioService'
+  getDepartamentos,
+  getDepartamento,
+  crearDepartamento,
+  actualizarDepartamento,
+  eliminarDepartamento,
+} from '@/services/departamentoService'
 
 const FORM_VACIO = () => ({
-  nombre:               '',
-  categoria:            'mantenimiento',
-  descripcion:          '',
-  precioBase:           0,
-  unidad:               'evento',
-  activo:               true,
-  requiereProgramacion: true,
-  duracionEstimadaMin:  60,
-  fecha:                null,
-  hora:                 null,
+  nombre: '',
+  ubicacionId: '',
+  numerodepto: '',
+  piso: '',
+  tipo: '',
+  m2: '',
+  habitaciones: '',
+  banos: '',
+  rentaMensual: '',
+  estado: 'disponible',
+  inquilinoId: '',
+  notas: '',
 })
-export const useTipoServicioStore = defineStore('tiposervicio', () => {
+
+// Corregido a CamelCase: useDepartamentoStore
+export const useDepartamentoStore = defineStore('departamento', () => {
 
   // ── Estado ────────────────────────────────────────────────────
-  const lista          = ref([])
+  const lista           = ref([])
   const seleccionada   = ref(null)
   const form           = ref(FORM_VACIO())
   const modoEdicion    = ref(false)
@@ -33,41 +37,8 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
   const error          = ref(null)
   const exito          = ref(null)
 
-  function normalizarProgramacion() {
-    if (!form.value.requiereProgramacion) {
-      form.value.fecha = null
-      form.value.hora = null
-    }
-  }
-//función que forza que si no hay programación, fecha y hora vayan como null.
-  function prepararPayload() {
-    const payload = { ...form.value }
-
-    if (!payload.requiereProgramacion) {
-      payload.fecha = null
-      payload.hora = null
-    } else {
-      payload.fecha = payload.fecha || null
-      payload.hora = payload.hora || null
-    }
-
-    return payload
-  }
-
-  watch(
-    () => form.value.requiereProgramacion,
-    (value) => {
-      if (!value) {
-        form.value.fecha = null
-        form.value.hora = null
-      }
-    }
-  )
-
   // ── Getters ───────────────────────────────────────────────────
-  const totalTipoServicios = computed(() => lista.value.length)
-
- 
+  const totalDepartamentos = computed(() => lista.value.length)
 
   // ── Helpers ───────────────────────────────────────────────────
   function _notificar(msg) {
@@ -80,7 +51,7 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
     cargando.value = true
     error.value    = null
     try {
-      lista.value = await getTiposervicios()
+      lista.value = await getDepartamentos()
     } catch (e) {
       error.value = e.message
     } finally {
@@ -93,17 +64,15 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
     seleccionada.value = null
     modoEdicion.value  = false
     error.value        = null
-    normalizarProgramacion()
   }
 
   async function iniciarEditar(id) {
     error.value = null
     try {
-      const data         = await getTiposervicio(id)
+      const data         = await getDepartamento(id)
       form.value         = { ...data }
       seleccionada.value = id
       modoEdicion.value  = true
-      normalizarProgramacion()
     } catch (e) {
       error.value = e.message
     }
@@ -112,22 +81,21 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
   async function guardar() {
     guardando.value = true
     error.value     = null
-    normalizarProgramacion()
     try {
-      const payload = prepararPayload()
+      const payload = { ...form.value }
 
       if (modoEdicion.value) {
-        const actualizada = await actualizarTiposervicio(seleccionada.value, payload)
+        const actualizada = await actualizarDepartamento(seleccionada.value, payload)
         const idx = lista.value.findIndex(u => u.id === actualizada.id)
         if (idx !== -1) lista.value[idx] = actualizada
-        _notificar('Tipo de servicio actualizado correctamente.')
+        _notificar('Departamento actualizado correctamente.')
       } else {
-        const nueva = await crearTiposervicio(payload)
+        const nueva = await crearDepartamento(payload)
         lista.value.push(nueva)
-        _notificar('Tipo de servicio creado correctamente.')
+        _notificar('Departamento creado correctamente.')
       }
       iniciarCrear()
-      return true //Operación exitosa
+      return true
     } catch (e) {
       error.value = e.message
       return false
@@ -140,10 +108,10 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
     eliminando.value = true
     error.value      = null
     try {
-      await eliminarTiposervicio(id)
+      await eliminarDepartamento(id)
       lista.value = lista.value.filter(u => u.id !== id)
       if (seleccionada.value === id) iniciarCrear()
-      _notificar('Tipo de servicio eliminado.')
+      _notificar('Departamento eliminado.')
     } catch (e) {
       error.value = e.message
     } finally {
@@ -151,14 +119,11 @@ export const useTipoServicioStore = defineStore('tiposervicio', () => {
     }
   }
 
- 
-
-
   return {
     lista, seleccionada, form, modoEdicion,
     cargando, guardando, eliminando,
     error, exito,
-    totalTipoServicios, 
+    totalDepartamentos,
     cargarLista,
     iniciarCrear, iniciarEditar,
     guardar, eliminar,

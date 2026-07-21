@@ -278,14 +278,14 @@ id, nombre, categoria,    // "amenidad" | "cuota" | "mantenimiento" | "reparacio
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { usetiposervicioStore } from '@/stores/tiposervicioStore'
+import { useTipoServicioStore } from '@/stores/tiposervicioStore'
 /**DashBoard y Menu */
 import CampoInput from '@/components/CampoInput.vue'
 import CampoSelect from '@/components/CampoSelect.vue'
 import DashboardLayout from '../layouts/DashboardLayout.vue'
 import NavBar from '../components/NavBar.vue'
 
-const store = usetiposervicioStore()
+const store = useTipoServicioStore()
 const mostrarForm = ref(false)
 const itemAEliminar = ref(null)
 

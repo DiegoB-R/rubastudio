@@ -1,5 +1,15 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { db } from '@/config/firebase'
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+} from 'firebase/firestore'
 import {
   getInquilinos,
   getInquilino,
@@ -11,6 +21,7 @@ import {
 const FORM_VACIO = () => ({
   nombre: '',
   apellidos: '',
+  celular: '',
   telefono: '',
   correo: '',
   estado: 'activo',
@@ -20,23 +31,22 @@ const FORM_VACIO = () => ({
   notas: '',
   fechaNacimiento: '',
 })
-export const useinquilinoStore = defineStore('inquilino', () => {
+
+export const useInquilinoStore = defineStore('inquilino', () => {
 
   // ── Estado ────────────────────────────────────────────────────
-  const lista           = ref([])
-  const seleccionada   = ref(null)
-  const form           = ref(FORM_VACIO())
-  const modoEdicion    = ref(false)
-  const cargando       = ref(false)
-  const guardando      = ref(false)
-  const eliminando     = ref(false)
-  const error          = ref(null)
-  const exito          = ref(null)
+  const lista         = ref([])
+  const seleccionada  = ref(null)
+  const form          = ref(FORM_VACIO())
+  const modoEdicion   = ref(false)
+  const cargando      = ref(false)
+  const guardando     = ref(false)
+  const eliminando    = ref(false)
+  const error         = ref(null)
+  const exito         = ref(null)
 
   // ── Getters ───────────────────────────────────────────────────
-  const totalinquilinos = computed(() => lista.value.length)
-
- 
+  const totalInquilinos = computed(() => lista.value.length)
 
   // ── Helpers ───────────────────────────────────────────────────
   function _notificar(msg) {
@@ -93,7 +103,7 @@ export const useinquilinoStore = defineStore('inquilino', () => {
         _notificar('Inquilino creado correctamente.')
       }
       iniciarCrear()
-      return true //Operación exitosa
+      return true
     } catch (e) {
       error.value = e.message
       return false
@@ -121,7 +131,7 @@ export const useinquilinoStore = defineStore('inquilino', () => {
     lista, seleccionada, form, modoEdicion,
     cargando, guardando, eliminando,
     error, exito,
-    totalinquilinos,
+    totalInquilinos,
     cargarLista,
     iniciarCrear, iniciarEditar,
     guardar, eliminar,
